@@ -221,6 +221,7 @@
           }
         }
       }
+      // 测试提交代码到git 成功了吗？
     },
     created () {
       this.getMenus()
