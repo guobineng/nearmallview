@@ -7,6 +7,7 @@
             :default-expanded-keys="expandedKey"
             draggable
             :allow-drop="allowDrop"
+            @node-drop="handleDrop"
             >
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <span>{{ node.label }}</span>
@@ -70,7 +71,8 @@
         },
         dialogType: '',
         title: '',
-        maxLevel: 0
+        maxLevel: 0,
+        updateNodes: []
       }
     },
     methods: {
@@ -199,7 +201,7 @@
         // 1获取当前被拖动节点的总层数
         console.log('拖动：', draggingNode, dropNode, type)
         this.countNodeLevel(draggingNode.data)
-        // 当前正在拖动的节点和父节点的深度不大于3即可
+        // 当前正在拖动的节点-父节点的深度<3即可
         let deep = this.maxLevel - draggingNode.data.catLevel + 1
         console.log('深度：', deep)
         // 如果是同一级别节点拖动
@@ -214,14 +216,41 @@
         if (node.children != null && node.children.length > 0) {
           for (let i = 0; i < node.children.length; i++) {
             if (node.children[i].catLevel > this.maxLevel) {
-              this.maxLevel = node.children[i].level
+              this.maxLevel = node.children[i].catLevel
             }
             // 递归遍历
             this.countNodeLevel(node.children[i])
           }
         }
+      },
+      //
+      handleDrop (draggingNode, dropNode, dropType, ev) {
+        console.log('handleDrop: ', draggingNode, dropNode, dropType)
+        // 1,当前节点最新的父节点id
+        let pCid = 0
+        let siblings = null
+        if (dropType === 'before' || dropType === 'after') {
+          pCid = dropNode.parent.data.catId
+          siblings = dropNode.parent.childNodes
+        } else {
+          pCid = dropNode.data.catId
+          siblings = dropNode.childNodes
+        }
+
+        // 2,当前拖拽节点的最新排序
+        for (let i = 0; i < siblings.length; i++) {
+          if (siblings[i].data.catId === draggingNode.data.catId) {
+            // 如果遍历的正是当前拖拽的节点
+            this.updateNodes.push({catId: siblings[i].data.catId, sort: i, parentCid: pCid})
+          } else {
+            this.updateNodes.push({catId: siblings[i].data.catId, sort: i})
+          }
+        }
+
+        // 3,当前拖拽节点的最新层级
+
+        console.log('updateNodes=', this.updateNodes)
       }
-      // 测试提交代码到git 成功了吗？111111111    222222222
     },
     created () {
       this.getMenus()
