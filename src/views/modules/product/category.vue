@@ -230,7 +230,7 @@
         let pCid = 0
         let siblings = null
         if (dropType === 'before' || dropType === 'after') {
-          pCid = dropNode.parent.data.catId
+          pCid = dropNode.parent.data.catId === undefined ? 0 : dropNode.parent.data.catId
           siblings = dropNode.parent.childNodes
         } else {
           pCid = dropNode.data.catId
@@ -241,7 +241,15 @@
         for (let i = 0; i < siblings.length; i++) {
           if (siblings[i].data.catId === draggingNode.data.catId) {
             // 如果遍历的正是当前拖拽的节点
-            this.updateNodes.push({catId: siblings[i].data.catId, sort: i, parentCid: pCid})
+            let catLevel = draggingNode.level
+            // 当前节点发生变化
+            if (siblings[i].level !== draggingNode.level) {
+              // 当前节点的层级发生变化
+              catLevel = siblings[i].level
+              // 修改当前节点的子节点层级
+              this.updateChildNodeLevel(siblings[i])
+            }
+            this.updateNodes.push({catId: siblings[i].data.catId, sort: i, parentCid: pCid, catLevel: catLevel})
           } else {
             this.updateNodes.push({catId: siblings[i].data.catId, sort: i})
           }
@@ -250,6 +258,16 @@
         // 3,当前拖拽节点的最新层级
 
         console.log('updateNodes=', this.updateNodes)
+      },
+      updateChildNodeLevel (node) {
+        if (node.childNodes.length > 0) {
+          for (let i = 0; i < node.childNodes.length; i++) {
+            var cNode = node.childNodes[i].data
+            this.updateNodes.push({catId: cNode.catId, catLevel: node.childNodes[i].level})
+            // 递归调用
+            this.updateChildNodeLevel(node.childNodes[i])
+          }
+        }
       }
     },
     created () {
