@@ -1,19 +1,21 @@
 <template>
   <el-row :gutter="20">
-    <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-    <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-    <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-    <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+    <el-col :span="6">
+      <category></category>
+    </el-col>
+    <el-col :span="18">
+      表格
+    </el-col>
   </el-row>
 </template>
 
 <script>
+
+import Category from '../common/category.vue'
 export default {
-  name: 'RenrenFastVueAttrgroup',
 
-  components: { ComponentName },
+  components: { Category },
 
-  directives: { DirectiveName },
 
   data() {
     return {
@@ -30,7 +32,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-
-</style>
