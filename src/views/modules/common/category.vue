@@ -3,6 +3,7 @@
     :props="defaultProps" 
     node-key="catId"
     ref="menuTree"
+    @node-click="nodeclick"
     >
     </el-tree>
 </template>
@@ -37,6 +38,11 @@ export default {
         this.menus = data.data
       })
     },
+    nodeclick (data, node, component) {
+      console.log('子组件category的节点被点击', data, node, component)
+      // 向父组件发送事件
+      this.$emit('tree-node-click', data, node, component);
+    }
   },
 };
 </script>
