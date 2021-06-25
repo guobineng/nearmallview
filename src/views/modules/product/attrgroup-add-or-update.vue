@@ -39,7 +39,7 @@
 </template>
 
 <script>
- import CategoryCascader from '../common/category-cascader'
+import CategoryCascader from '../common/category-cascader'
 export default {
   data() {
     return {
