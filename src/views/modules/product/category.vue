@@ -23,14 +23,14 @@
             type="text"
             size="mini"
             @click="() => append(data)"
-          >Append</el-button>
-          <el-button type="text" size="mini" @click="edit(data)">edit</el-button>
+          >添加</el-button>
+          <el-button type="text" size="mini" @click="edit(data)">修改</el-button>
           <el-button
             v-if="node.childNodes.length==0"
             type="text"
             size="mini"
             @click="() => remove(node, data)"
-          >Delete</el-button>
+          >删除</el-button>
         </span>
       </span>
     </el-tree>
@@ -241,35 +241,26 @@ export default {
         }
       }
     },
-    edit(data) {
-      console.log("要修改的数据", data);
-      this.dialogType = "edit";
-      this.title = "修改分类";
-      this.dialogVisible = true;
-
-      //发送请求获取当前节点最新的数据
-      this.$http({
-        url: this.$http.adornUrl(`/product/category/info/${data.catId}`),
-        method: "get"
-      }).then(({data}) => {
-        //请求成功
-        console.log("要回显的数据", data);
-        this.category.name = data.data.name;
-        this.category.catId = data.data.catId;
-        this.category.icon = data.data.icon;
-        this.category.productUnit = data.data.productUnit;
-        this.category.parentCid = data.data.parentCid;
-        this.category.catLevel = data.data.catLevel;
-        this.category.sort = data.data.sort;
-        this.category.showStatus = data.data.showStatus;
-        /**
-         *         parentCid: 0,
-         catLevel: 0,
-         showStatus: 1,
-         sort: 0,
-         */
-      });
-    },
+    edit (data) {
+        console.log('要修改的数据：', data)
+        this.dialogType = 'edit'
+        this.title = '修改分类'
+        this.dialogVisible = true
+        // 发送请求获取最新的数据
+        this.$http({
+          // url: this.$http.adornUrl(`/product/category/info/${data.catId}`),
+          url: this.$http.adornUrl('/product/category/info'),
+          method: 'post',
+          data: this.$http.adornData(data.catId, false)
+        }).then(({data}) => {
+          console.log('修改请求到的数据：', data)
+          this.category.name = data.data.name
+          this.category.catId = data.data.catId
+          this.category.icon = data.data.icon
+          this.category.productUnit = data.data.productUnit
+          this.category.parentCid = data.data.parentCid
+        })
+      },
     append(data) {
       console.log("append", data);
       this.dialogType = "add";
@@ -302,10 +293,17 @@ export default {
         method: "post",
         data: this.$http.adornData({catId, name, icon, productUnit}, false)
       }).then(({data}) => {
-        this.$message({
-          message: "菜单修改成功",
-          type: "success"
-        });
+        if(data.code === 0){
+          this.$message({
+            message: "菜单修改成功",
+            type: "success"
+          });
+        }else{
+          this.$message.error({
+            message: data.msg,
+          });
+        }
+        
         //关闭对话框
         this.dialogVisible = false;
         //刷新出新的菜单

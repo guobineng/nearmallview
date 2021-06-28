@@ -216,6 +216,7 @@ export default {
         })
       }).then(({data}) => {
         if (data && data.code === 0) {
+          console.log('新增关联获取到数据：', data)
           this.dataList = data.page.list;
           this.totalPage = data.page.totalCount;
         } else {

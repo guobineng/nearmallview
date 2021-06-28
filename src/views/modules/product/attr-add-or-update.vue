@@ -100,7 +100,7 @@ export default {
         attrId: 0,
         attrName: "",
         searchType: 0,
-        valueType: 1,
+        valueType: 0,
         icon: "",
         valueSelect: "",
         attrType: 1,
@@ -124,7 +124,7 @@ export default {
         ],
         valueType: [
           {
-            required: true,
+            required: false,
             message: "值类型不能为空",
             trigger: "blur"
           }
